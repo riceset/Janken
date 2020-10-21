@@ -91,10 +91,11 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 ZStack {
-                    //The blue/black gradient border.
+                    //The blue/black gradient circle.
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Circle())
                         .padding()
+                        .shadow(color: .black, radius: 10)
                         //A simple if statement that displays the thinking face if the thinking bool is true (it starts as true, but whenever the player taps one of these buttons underneath, the value is set to false, so it will run the else statement below.)
                     if thinking == true {
                         Text("🤔")
@@ -116,6 +117,7 @@ struct ContentView: View {
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Capsule())
                         .frame(width: 130, height: 50)
+                        .shadow(color: .black, radius: 6)
                     HStack {
                         Image(systemName: "star.fill")
                         Text("\(score)")
