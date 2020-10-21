@@ -1,22 +1,31 @@
 import SwiftUI
 
 struct ContentView: View {
+    //possible moves (Array)
     @State private var moves = ["✋", "✊", "✌️"]
+    
+    //the choices the bot have when playing the game. index 0...2 ("✋", "✊", "✌️")
     @State private var botChoice = Int.random(in: 0...2)
-    @State private var winLose = ""
+    
+    //The initial score is set to 0
     @State private var score = 0
+    
+    //The thinking face boolean. It starts as true because the game has to start/reset always showing this face.
     @State private var thinking = true
-    @State private var showingScore = false
+    
+    //Shows the alert.
+    @State private var showingAlert = false
+    
+    //This var was suposed to be a boolean with either the player wins or lose, but in Janken, there is a third possibility, which is draw, so I had to turn it into a string.
     @State private var winLoseDraw = ""
     
+    //The function gets executed when the paper (button) is tapped.
     func paper() {
         if botChoice == 1 {
-            winLose = "You Won!"
             score += 1
             winLoseDraw = "win"
         }
         if botChoice == 2 {
-            winLose = "You Lost!"
             if score <= 0 {}
             else {
                 score -= 1
@@ -26,12 +35,13 @@ struct ContentView: View {
         if botChoice == 0 {
             winLoseDraw = "draw"
         }
-        showingScore = true
+        showingAlert = true
+        thinking = false
     }
     
+    //The function gets executed when the rock (button) is tapped.
     func rock() {
         if botChoice == 0 {
-            winLose = "You Lost!"
             if score <= 0 {}
             else {
                 score -= 1
@@ -39,24 +49,23 @@ struct ContentView: View {
             winLoseDraw = "lose"
         }
         if botChoice == 2 {
-            winLose = "You Won!"
             score += 1
             winLoseDraw = "win"
         }
         if botChoice == 1 {
             winLoseDraw = "draw"
         }
-        showingScore = true
+        showingAlert = true
+        thinking = false
     }
     
+    //The function gets executed when the scissors (button) is tapped.
     func scissors() {
         if botChoice == 0 {
-            winLose = "You Won!"
             score += 1
             winLoseDraw = "win"
         }
         if botChoice == 1 {
-            winLose = "You Lost!"
             if score <= 0 {}
             else {
                 score -= 1
@@ -66,9 +75,12 @@ struct ContentView: View {
         if botChoice == 2 {
             winLoseDraw = "draw"
         }
-        showingScore = true
+        showingAlert = true
+        thinking = false
     }
     
+    
+    //This function gets executed, each turn. It turns on the thinking face bool, and randomizes the moves again.
     func reset() {
         thinking = true
         botChoice = Int.random(in: 0...2)
@@ -77,25 +89,29 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                
                 Spacer()
                 ZStack {
+                    //The blue/black gradient border.
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Circle())
                         .padding()
+                        //A simple if statement that displays the thinking face if the thinking bool is true (it starts as true, but whenever the player taps one of these buttons underneath, the value is set to false, so it will run the else statement below.)
                     if thinking == true {
                         Text("🤔")
                                 .font(.system(size: 200))
                                 .shadow(color: .black, radius: 10)
                     }
+                    
                     else {
                         Text("\(moves[botChoice])")
                                 .font(.system(size: 200))
                                 .shadow(color: .black, radius: 10)
                     }
+                    
                 }
                 
                 Spacer()
+                //This ZStack represents the score.
                 ZStack {
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Capsule())
@@ -110,42 +126,40 @@ struct ContentView: View {
                     .font(.title)
                     .foregroundColor(.white)
                 }
-                
+                //This HStack contains the 3 possible moves that the player can use, when tapped, it executes the corresponding function.
                 HStack {
                     Button(action: {
                        paper()
-                        thinking = false
                     }, label: {
                         Text("\(moves[0])")
                             .shadow(color: .black, radius: 10)
                     })
                     Button(action: {
                         rock()
-                        thinking = false
                     }, label: {
                         Text("\(moves[1])")
                             .shadow(color: .black, radius: 10)
                     })
                     Button(action: {
                         scissors()
-                        thinking = false
                     }, label: {
                         Text("\(moves[2])")
                             .shadow(color: .black, radius: 10)
                     })
                 }.font(.system(size: 100))
-                    
-            }.alert(isPresented: $showingScore, content: {
+                
+            //The 3 possible alerts. lose, win, draw.
+            }.alert(isPresented: $showingAlert, content: {
                 if self.winLoseDraw == "lose" {
                     return
-                        Alert(title: Text(winLose), dismissButton: .default(Text("Continue")) {
+                        Alert(title: Text("You Lost!"), dismissButton: .default(Text("Continue")) {
                             self.reset()
                         })
                 }
                 
                 else if self.winLoseDraw == "win" {
                     return
-                        Alert(title: Text(winLose), dismissButton: .default(Text("Continue")) {
+                        Alert(title: Text("You Won!"), dismissButton: .default(Text("Continue")) {
                             self.reset()
                         })
                 }
@@ -156,9 +170,10 @@ struct ContentView: View {
                             self.reset()
                         })
                 }
+                //this will never get executed.
                 else {
                     return
-                        Alert(title: Text(winLose), message: Text("You Won"), dismissButton: .default(Text("Continue")))
+                        Alert(title: Text(""), message: Text(""), dismissButton: .default(Text("")))
                 }
             })
             .navigationBarTitle("Janken")
