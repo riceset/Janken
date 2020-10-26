@@ -86,6 +86,11 @@ struct ContentView: View {
         botChoice = Int.random(in: 0...2)
     }
     
+    //The trailing button that resets the score to 0.
+    func resetGameButton() {
+        score = 0
+    }
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -179,6 +184,13 @@ struct ContentView: View {
                 }
             })
             .navigationBarTitle("Janken")
+            .navigationBarItems(trailing:
+                                    Button(action: {
+                                        resetGameButton()
+                                    }, label: {
+                                        Text("Reset")
+                                    })
+            )
         }
     }
 }
