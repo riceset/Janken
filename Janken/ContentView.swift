@@ -10,6 +10,9 @@ struct ContentView: View {
     //The initial score is set to 0
     @State private var score = 0
     
+    //The initial bot score is set to 0
+    @State private var botScore = 0
+    
     //The thinking face boolean. It starts as true because the game has to start/reset always showing this face.
     @State private var thinking = true
     
@@ -18,6 +21,8 @@ struct ContentView: View {
     
     //This var was suposed to be a boolean with either the player wins or lose, but in Janken, there is a third possibility, which is draw, so I had to turn it into a string.
     @State private var winLoseDraw = ""
+    //Dark mode checker
+    @Environment(\.colorScheme) var colorScheme
     
     //The function gets executed when the paper (button) is tapped.
     func paper() {
@@ -26,10 +31,7 @@ struct ContentView: View {
             winLoseDraw = "win"
         }
         if botChoice == 2 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 0 {
@@ -42,10 +44,7 @@ struct ContentView: View {
     //The function gets executed when the rock (button) is tapped.
     func rock() {
         if botChoice == 0 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 2 {
@@ -66,10 +65,7 @@ struct ContentView: View {
             winLoseDraw = "win"
         }
         if botChoice == 1 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 2 {
@@ -89,6 +85,7 @@ struct ContentView: View {
     //The trailing button that resets the score to 0.
     func resetGameButton() {
         score = 0
+        botScore = 0
     }
     
     var body: some View {
@@ -100,7 +97,7 @@ struct ContentView: View {
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Circle())
                         .padding()
-                        .shadow(color: .black, radius: 10)
+                        .shadow(color: .black, radius: 6)
                         //A simple if statement that displays the thinking face if the thinking bool is true (it starts as true, but whenever the player taps one of these buttons underneath, the value is set to false, so it will run the else statement below.)
                     if thinking == true {
                         Text("🤔")
@@ -117,21 +114,41 @@ struct ContentView: View {
                 }
                 
                 Spacer()
-                //This ZStack represents the score.
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
-                        .clipShape(Capsule())
-                        .frame(width: 130, height: 50)
-                        .shadow(color: .black, radius: 6)
-                    HStack {
-                        Image(systemName: "star.fill")
-                        Text("\(score)")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 36))
+                //This HStack represents the score.
+                HStack {
+                    Spacer()
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+                            .clipShape(Capsule())
+                            .frame(width: 130, height: 50)
+                            .shadow(color: .black, radius: 6)
+                            HStack {
+                                Image(systemName: "person")
+                                Text("\(score)")
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 36))
+                            }
+                            .padding()
+                            .font(.title)
+                            .foregroundColor(.white)
                     }
-                    .padding()
-                    .font(.title)
-                    .foregroundColor(.white)
+                    Spacer()
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+                            .clipShape(Capsule())
+                            .frame(width: 130, height: 50)
+                            .shadow(color: .black, radius: 6)
+                        HStack {
+                            Text("🤔")
+                            Text("\(botScore)")
+                                .fontWeight(.semibold)
+                                .font(.system(size: 36))
+                        }
+                        .padding()
+                        .font(.title)
+                        .foregroundColor(.white)
+                    }
+                    Spacer()
                 }
                 //This HStack contains the 3 possible moves that the player can use, when tapped, it executes the corresponding function.
                 HStack {
@@ -139,19 +156,19 @@ struct ContentView: View {
                        paper()
                     }, label: {
                         Text("\(moves[0])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                     Button(action: {
                         rock()
                     }, label: {
                         Text("\(moves[1])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                     Button(action: {
                         scissors()
                     }, label: {
                         Text("\(moves[2])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                 }.font(.system(size: 100))
                 
@@ -195,8 +212,14 @@ struct ContentView: View {
     }
 }
 
+
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+            ContentView()
+                .environment(\.colorScheme, .dark)
+        }
     }
 }
