@@ -21,6 +21,8 @@ struct ContentView: View {
     
     //This var was suposed to be a boolean with either the player wins or lose, but in Janken, there is a third possibility, which is draw, so I had to turn it into a string.
     @State private var winLoseDraw = ""
+    //Dark mode checker
+    @Environment(\.colorScheme) var colorScheme
     
     //The function gets executed when the paper (button) is tapped.
     func paper() {
@@ -83,6 +85,7 @@ struct ContentView: View {
     //The trailing button that resets the score to 0.
     func resetGameButton() {
         score = 0
+        botScore = 0
     }
     
     var body: some View {
@@ -94,7 +97,7 @@ struct ContentView: View {
                     LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
                         .clipShape(Circle())
                         .padding()
-                        .shadow(color: .black, radius: 10)
+                        .shadow(color: .black, radius: 6)
                         //A simple if statement that displays the thinking face if the thinking bool is true (it starts as true, but whenever the player taps one of these buttons underneath, the value is set to false, so it will run the else statement below.)
                     if thinking == true {
                         Text("🤔")
@@ -153,19 +156,19 @@ struct ContentView: View {
                        paper()
                     }, label: {
                         Text("\(moves[0])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                     Button(action: {
                         rock()
                     }, label: {
                         Text("\(moves[1])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                     Button(action: {
                         scissors()
                     }, label: {
                         Text("\(moves[2])")
-                            .shadow(color: .black, radius: 10)
+                            .shadow(color: colorScheme == .dark ? .yellow : .black, radius: 6)
                     })
                 }.font(.system(size: 100))
                 
@@ -209,8 +212,14 @@ struct ContentView: View {
     }
 }
 
+
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+            ContentView()
+                .environment(\.colorScheme, .dark)
+        }
     }
 }
