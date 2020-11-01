@@ -10,6 +10,9 @@ struct ContentView: View {
     //The initial score is set to 0
     @State private var score = 0
     
+    //The initial bot score is set to 0
+    @State private var botScore = 0
+    
     //The thinking face boolean. It starts as true because the game has to start/reset always showing this face.
     @State private var thinking = true
     
@@ -26,10 +29,7 @@ struct ContentView: View {
             winLoseDraw = "win"
         }
         if botChoice == 2 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 0 {
@@ -42,10 +42,7 @@ struct ContentView: View {
     //The function gets executed when the rock (button) is tapped.
     func rock() {
         if botChoice == 0 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 2 {
@@ -66,10 +63,7 @@ struct ContentView: View {
             winLoseDraw = "win"
         }
         if botChoice == 1 {
-            if score <= 0 {}
-            else {
-                score -= 1
-            }
+            botScore += 1
             winLoseDraw = "lose"
         }
         if botChoice == 2 {
@@ -117,21 +111,41 @@ struct ContentView: View {
                 }
                 
                 Spacer()
-                //This ZStack represents the score.
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
-                        .clipShape(Capsule())
-                        .frame(width: 130, height: 50)
-                        .shadow(color: .black, radius: 6)
-                    HStack {
-                        Image(systemName: "star.fill")
-                        Text("\(score)")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 36))
+                //This HStack represents the score.
+                HStack {
+                    Spacer()
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+                            .clipShape(Capsule())
+                            .frame(width: 130, height: 50)
+                            .shadow(color: .black, radius: 6)
+                            HStack {
+                                Image(systemName: "person")
+                                Text("\(score)")
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 36))
+                            }
+                            .padding()
+                            .font(.title)
+                            .foregroundColor(.white)
                     }
-                    .padding()
-                    .font(.title)
-                    .foregroundColor(.white)
+                    Spacer()
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+                            .clipShape(Capsule())
+                            .frame(width: 130, height: 50)
+                            .shadow(color: .black, radius: 6)
+                        HStack {
+                            Text("🤔")
+                            Text("\(botScore)")
+                                .fontWeight(.semibold)
+                                .font(.system(size: 36))
+                        }
+                        .padding()
+                        .font(.title)
+                        .foregroundColor(.white)
+                    }
+                    Spacer()
                 }
                 //This HStack contains the 3 possible moves that the player can use, when tapped, it executes the corresponding function.
                 HStack {
